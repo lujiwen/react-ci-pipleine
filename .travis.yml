@@ -1,0 +1,22 @@
+language: node_js
+node_js:
+  - "12"
+
+before_script:
+  - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.19.1
+  - export PATH="$HOME/.yarn/bin:$PATH"
+  - yarn install
+
+jobs:
+  include:
+    - stage: build
+      script: yarn build && ls
+    - stage: build docker image
+      script: ls && docker build . -t react-app:latest
+    - stage: run docker container
+      script: docker run -p  5000:5000 --rm -it --name react-app react-app:latest
+cache:
+  yarn: true
+
+git:
+  depth: 1
